@@ -15,7 +15,7 @@ This readme present my submission for Project 3: Behavioral cloning of Udacity S
 
 
 #### Network Architecture
-I've used [Nvidia] (http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) model as starting point but after many tries, I've changed the model to get better result. Also I tried the [CommaAI](https://github.com/commaai/research/blob/master/train_steering_model.py) as well.
+I've used [Nvidia] (http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) model as starting point but after many tries, I've changed the model by adding and removing layers in order to get better result. Also I tried the [CommaAI](https://github.com/commaai/research/blob/master/train_steering_model.py) as well.
 
 Hyperparameters:
 * Learning rate: 0.001. I tried different learning rates and found 0.001 to be the most effective learning rate.
@@ -24,11 +24,11 @@ Hyperparameters:
 * Optimizer: Adam. I chose the [Adam optimizer](https://keras.io/optimizers/#adam), because it's extremly robust and working well.
 * Loss Function: MSE
 
-The network consists of 9 layers, including a normalization layer, 4 convolutional layers and 4 fully connected layers along with a 50% dropout layer after each fully connected layer. The total number of parameters is 400,123.
+The network consists of 10 layers, including a normalization layer, 4 convolutional layers, a flatten layer after all convolution layers and 4 fully connected layers along with a 50% dropout layer after each fully connected layer. The total number of parameters is 432,169.
 
 I used [Keras' Lamda layer](https://keras.io/layers/core/#lambda) as input layer to normalize all input features on the GPU since it could do it much faster than on a CPU.
 
-I've added a a dropout layer after each fully connected layer to avoid overfitting.
+I've added a a dropout layer after each fully connected layer to avoid overfitting. Also I've used ELU after each layers.
 
 ```
 ____________________________________________________________________________________________________
@@ -38,39 +38,58 @@ lambda_1 (Lambda)                (None, 20, 40, 3)     0           lambda_input_
 ____________________________________________________________________________________________________
 convolution2d_1 (Convolution2D)  (None, 16, 36, 24)    1824        lambda_1[0][0]                   
 ____________________________________________________________________________________________________
-maxpooling2d_1 (MaxPooling2D)    (None, 8, 18, 24)     0           convolution2d_1[0][0]            
+elu_1 (ELU)                      (None, 16, 36, 24)    0           convolution2d_1[0][0]            
+____________________________________________________________________________________________________
+maxpooling2d_1 (MaxPooling2D)    (None, 8, 18, 24)     0           elu_1[0][0]                      
 ____________________________________________________________________________________________________
 convolution2d_2 (Convolution2D)  (None, 4, 14, 36)     21636       maxpooling2d_1[0][0]             
 ____________________________________________________________________________________________________
-maxpooling2d_2 (MaxPooling2D)    (None, 2, 7, 36)      0           convolution2d_2[0][0]            
+elu_2 (ELU)                      (None, 4, 14, 36)     0           convolution2d_2[0][0]            
+____________________________________________________________________________________________________
+maxpooling2d_2 (MaxPooling2D)    (None, 2, 7, 36)      0           elu_2[0][0]                      
 ____________________________________________________________________________________________________
 convolution2d_3 (Convolution2D)  (None, 2, 7, 48)      43248       maxpooling2d_2[0][0]             
 ____________________________________________________________________________________________________
-maxpooling2d_3 (MaxPooling2D)    (None, 1, 3, 48)      0           convolution2d_3[0][0]            
+elu_3 (ELU)                      (None, 2, 7, 48)      0           convolution2d_3[0][0]            
+____________________________________________________________________________________________________
+maxpooling2d_3 (MaxPooling2D)    (None, 1, 3, 48)      0           elu_3[0][0]                      
 ____________________________________________________________________________________________________
 convolution2d_4 (Convolution2D)  (None, 1, 3, 64)      27712       maxpooling2d_3[0][0]             
 ____________________________________________________________________________________________________
-flatten_1 (Flatten)              (None, 192)           0           convolution2d_4[0][0]            
+elu_4 (ELU)                      (None, 1, 3, 64)      0           convolution2d_4[0][0]            
+____________________________________________________________________________________________________
+flatten_1 (Flatten)              (None, 192)           0           elu_4[0][0]                      
 ____________________________________________________________________________________________________
 dense_1 (Dense)                  (None, 1024)          197632      flatten_1[0][0]                  
 ____________________________________________________________________________________________________
-dropout_1 (Dropout)              (None, 1024)          0           dense_1[0][0]                    
+elu_5 (ELU)                      (None, 1024)          0           dense_1[0][0]                    
 ____________________________________________________________________________________________________
-dense_2 (Dense)                  (None, 100)           102500      dropout_1[0][0]                  
+dropout_1 (Dropout)              (None, 1024)          0           elu_5[0][0]                      
 ____________________________________________________________________________________________________
-dropout_2 (Dropout)              (None, 100)           0           dense_2[0][0]                    
+dense_2 (Dense)                  (None, 128)           131200      dropout_1[0][0]                  
 ____________________________________________________________________________________________________
-dense_3 (Dense)                  (None, 50)            5050        dropout_2[0][0]                  
+elu_6 (ELU)                      (None, 128)           0           dense_2[0][0]                    
 ____________________________________________________________________________________________________
-dropout_3 (Dropout)              (None, 50)            0           dense_3[0][0]                    
+dropout_2 (Dropout)              (None, 128)           0           elu_6[0][0]                      
 ____________________________________________________________________________________________________
-dense_4 (Dense)                  (None, 10)            510         dropout_3[0][0]                  
+dense_3 (Dense)                  (None, 64)            8256        dropout_2[0][0]                  
 ____________________________________________________________________________________________________
-dense_5 (Dense)                  (None, 1)             11          dense_4[0][0]                    
+elu_7 (ELU)                      (None, 64)            0           dense_3[0][0]                    
+____________________________________________________________________________________________________
+dropout_3 (Dropout)              (None, 64)            0           elu_7[0][0]                      
+____________________________________________________________________________________________________
+dense_4 (Dense)                  (None, 10)            650         dropout_3[0][0]                  
+____________________________________________________________________________________________________
+elu_8 (ELU)                      (None, 10)            0           dense_4[0][0]                    
+____________________________________________________________________________________________________
+dense_5 (Dense)                  (None, 1)             11          elu_8[0][0]                      
+____________________________________________________________________________________________________
+elu_9 (ELU)                      (None, 1)             0           dense_5[0][0]                    
 ====================================================================================================
-Total params: 400,123
-Trainable params: 400,123
+Total params: 432,169
+Trainable params: 432,169
 Non-trainable params: 0
+____________________________________________________________________________________________________
 ```
 
 #### Gathering Training Data
