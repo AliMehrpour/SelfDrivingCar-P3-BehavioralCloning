@@ -2,7 +2,15 @@
 
 ### Project 3: Behavioral Cloning Project
 
-#### Network Architecturesd
+#### Commands
+### Train the Network
+```python model.py```
+
+### Behavioral Cloning of human driving
+```python drive.py model.json```
+
+
+#### Network Architecture
 I've used [Nvidia] (http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) model as starting point but after many tries, I've changed the model to get better result on my traing and validation data.
 
 Hyperparameters:
@@ -58,4 +66,14 @@ Total params: 400,123
 Trainable params: 400,123
 Non-trainable params: 0
 ```
+
+#### Gathering Training Data
+After training the network for many times, I found out that traning data is more important than network! IMO, Gathering trainging data was the hardest part of this project and took a lot of time. So I collected my own data in Self-Driving Car simulator on Mac OS using a playstation controller.
+
+After recording data and training network many time, I saw the network fails on sharp turns. So I record some recovery data by driving the car towards end of lane with recording off and then driving it back (recovery) with recording on.
+
+#### Training
+I trained the model using the keras generator with batch size of 128 for 20 epochs. I trained the network on a g2.2xlarge EC2 instance, saved the model and weights persisted as model.json and model.h5 respectively,then scped model.json and model.h5 to my machine, then tested the model in autonomous mode using drive.py.
+
+
 
