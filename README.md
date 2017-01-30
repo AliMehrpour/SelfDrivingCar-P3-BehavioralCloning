@@ -79,10 +79,12 @@ After recording data and training network many time, I saw the network fails on 
 #### Training
 I trained the model using the keras generator with batch size of 128 for 20 epochs. I trained the network on a g2.2xlarge EC2 instance, saved the model and weights persisted as model.json and model.h5 respectively,then scped model.json and model.h5 to my machine, then tested the model in autonomous mode using drive.py.
 
-#### Pre-Processing Data (Augmenting)
-The pre-processing algorithms consists the following steps:
-1. Augment the brightness of camera image randomly
-2. Convert BGR to YUV colorspace
-3. Crops top 65 pixels and bottom 20 pixels
-4. Blur image
-5. Resize image to (20, 40)
+#### Augmentation Data (Pre-processing)
+The augmentation algorithm consists the following steps:
+* Considers left, center and right images at each iteration randomly
+* Find mean of all steering angles and augment them
+* Augment the brightness of camera image randomly
+* Convert BGR to YUV colorspace
+* Crops top 65 pixels and bottom 20 pixels
+* Blur image
+* Resize image to (20, 40)
