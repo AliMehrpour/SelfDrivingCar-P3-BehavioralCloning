@@ -78,7 +78,16 @@ After training the network for many times, I found out that traning data is more
 
 After recording data and training network many time, I saw the network fails on sharp turns. So I record some recovery data by driving the car towards end of lane with recording off and then driving it back (recovery) with recording on.
 
-After collecting about 20k data, I've used 20% of that for validation and 80% for training purpose.
+After collecting about 20k data, I've used 20% of that for validation and 80% for training purpose. These are three example of images:
+
+Center Camera
+![Center](center_camera_image_sample.png)
+
+Left Camera
+![Left](left_camera_image_sample.png)
+
+Right Camera
+![Right](right_camera_image_sample.png)
 
 #### Training
 I trained the model using the keras generator with batch size of 128 for 20 epochs. I trained the network on a g2.2xlarge EC2 instance, saved the model and weights persisted as model.json and model.h5 respectively,then scped model.json and model.h5 to my machine, then tested the model in autonomous mode using drive.py.
