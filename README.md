@@ -81,13 +81,13 @@ After recording data and training network many time, I saw the network fails on 
 After collecting about 20k data, I've used 20% of that for validation and 80% for training purpose. These are three example of images:
 
 Center Camera
-![Center](./center_camera_image_sample.png)
+![Center](./center_camera_image_sample.jpg)
 
 Left Camera
-![Left](./left_camera_image_sample.png)
+![Left](./left_camera_image_sample.jpg)
 
 Right Camera
-![Right](./right_camera_image_sample.png)
+![Right](./right_camera_image_sample.jpg)
 
 #### Training
 I trained the model using the keras generator with batch size of 128 for 20 epochs. I trained the network on a g2.2xlarge EC2 instance, saved the model and weights persisted as model.json and model.h5 respectively,then scped model.json and model.h5 to my machine, then tested the model in autonomous mode using drive.py.
