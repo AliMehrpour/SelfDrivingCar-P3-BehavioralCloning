@@ -15,7 +15,7 @@ This readme present my submission for Project 3: Behavioral cloning of Udacity S
 
 
 #### Network Architecture
-I've used [Nvidia] (http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) model as starting point but after many tries, I've changed the model to get better result on my traing and validation data.
+I've used [Nvidia] (http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) model as starting point but after many tries, I've changed the model to get better result. Also I tried the [CommaAI](https://github.com/commaai/research/blob/master/train_steering_model.py) as well.
 
 Hyperparameters:
 * Learning rate: 0.001. I tried different learning rates and found 0.001 to be the most effective learning rate.
@@ -27,6 +27,8 @@ Hyperparameters:
 The network consists of 9 layers, including a normalization layer, 4 convolutional layers and 4 fully connected layers along with a 50% dropout layer after each fully connected layer. The total number of parameters is 400,123.
 
 I used [Keras' Lamda layer](https://keras.io/layers/core/#lambda) as input layer to normalize all input features on the GPU since it could do it much faster than on a CPU.
+
+I've added a a dropout layer after each fully connected layer to avoid overfitting.
 
 ```
 ____________________________________________________________________________________________________
@@ -76,6 +78,8 @@ After training the network for many times, I found out that traning data is more
 
 After recording data and training network many time, I saw the network fails on sharp turns. So I record some recovery data by driving the car towards end of lane with recording off and then driving it back (recovery) with recording on.
 
+After collecting about 20k data, I've used 20% of that for validation and 80% for training purpose.
+
 #### Training
 I trained the model using the keras generator with batch size of 128 for 20 epochs. I trained the network on a g2.2xlarge EC2 instance, saved the model and weights persisted as model.json and model.h5 respectively,then scped model.json and model.h5 to my machine, then tested the model in autonomous mode using drive.py.
 
@@ -85,6 +89,7 @@ The augmentation algorithm consists the following steps:
 * Find mean of all steering angles and augment them
 * Augment the brightness of camera image randomly
 * Convert BGR to YUV colorspace
-* Crops top 65 pixels and bottom 20 pixels
-* Blur image
+* Crops top 65 pixels (unnecessary for training) and bottom 20 pixels (remove the hood of the car)
+* Blur image in order to smooth out some artifact
 * Resize image to (20, 40)
+* Flip the image about the vertical midline to simulate driving in opposite direction. The data collected had a lot of left turns, so to balance the left and right turns, images were flipped about the vertical axis randomly. The angles corresponding to flipped images were multplied by -1 to correct for steering in opposite direction.
