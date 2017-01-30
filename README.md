@@ -2,11 +2,15 @@
 
 ### Project 3: Behavioral Cloning Project
 
+#### Overview
+This readme present my submission for Project 3: Behavioral cloning of Udacity Self Driving Car Nanodegree course.
+
+
 #### Commands
-### Train the Network
+###### Train the Network
 ```python model.py```
 
-### Behavioral Cloning of human driving
+###### Behavioral Cloning of human driving
 ```python drive.py model.json```
 
 
@@ -75,5 +79,10 @@ After recording data and training network many time, I saw the network fails on 
 #### Training
 I trained the model using the keras generator with batch size of 128 for 20 epochs. I trained the network on a g2.2xlarge EC2 instance, saved the model and weights persisted as model.json and model.h5 respectively,then scped model.json and model.h5 to my machine, then tested the model in autonomous mode using drive.py.
 
-
-
+#### Pre-Processing Data (Augmenting)
+The pre-processing algorithms consists the following steps:
+1. Augment the brightness of camera image randomly
+2. Convert BGR to YUV colorspace
+3. Crops top 65 pixels and bottom 20 pixels
+4. Blur image
+5. Resize image to (20, 40)
