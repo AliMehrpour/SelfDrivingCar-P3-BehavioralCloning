@@ -22,11 +22,6 @@ def preprocess_image(image, output_shape):
     Same pre-process as what did in traning
     """
 
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    random_bright = .25 * np.random.uniform()
-    image[:,:,2] = image[:,:,2] * random_bright
-    image = cv2.cvtColor(image, cv2.COLOR_HSV2BGR)
-
     image = cv2.cvtColor(image, cv2.COLOR_BGR2YUV)
 
     shape = image.shape

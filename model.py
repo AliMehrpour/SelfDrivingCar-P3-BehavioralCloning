@@ -51,17 +51,11 @@ class DataItem:
 def preprocess_image(image, output_shape):
     """
     Steps:
-        1. Augment the brightness of camera image randomly
-        2. Convert BGR to YUV colorspace
-        3. Crops top 65 pixels and bottom 20 pixels
-        4. Blur image
-        5. Resize image
+        1. Convert BGR to YUV colorspace
+        2. Crops top 65 pixels and bottom 20 pixels
+        3. Blur image
+        4. Resize image
     """
-
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    random_bright = .25 * np.random.uniform()
-    image[:,:,2] = image[:,:,2] * random_bright
-    image = cv2.cvtColor(image, cv2.COLOR_HSV2BGR)
 
     image = cv2.cvtColor(image, cv2.COLOR_BGR2YUV)
 
@@ -177,34 +171,27 @@ def batch_generator(X, y, label, num_epochs, batch_size, output_shape):
 def build_model(input_shape):
     learning_rate = 0.001
     keep_prob = 0.5
+    activation = "elu"
 
     model = Sequential()
     model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=input_shape, output_shape=output_shape))
-    model.add(Convolution2D(24, 5, 5, border_mode='valid'))
-    model.add(ELU())
+    model.add(Convolution2D(24, 5, 5, border_mode='valid', activation=activation))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Convolution2D(36, 5, 5, border_mode='valid'))
-    model.add(ELU())
+    model.add(Convolution2D(36, 5, 5, border_mode='valid', activation=activation))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Convolution2D(48, 5, 5, border_mode='same'))
-    model.add(ELU())
+    model.add(Convolution2D(48, 5, 5, border_mode='same', activation=activation))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Convolution2D(64, 3, 3, border_mode='same'))
-    model.add(ELU())
+    model.add(Convolution2D(64, 3, 3, border_mode='same', activation=activation))
     model.add(Flatten())
-    model.add(Dense(1024))
-    model.add(ELU())
     model.add(Dropout(keep_prob))
-    model.add(Dense(128))
-    model.add(ELU())
+    model.add(Dense(1024, activation=activation))
     model.add(Dropout(keep_prob))
-    model.add(Dense(64))
-    model.add(ELU())
+    model.add(Dense(100, activation=activation))
     model.add(Dropout(keep_prob))
-    model.add(Dense(10))
-    model.add(ELU())
-    model.add(Dense(1, init='normal'))
-    model.add(ELU())
+    model.add(Dense(50, activation=activation))
+    model.add(Dropout(keep_prob))
+    model.add(Dense(10, activation=activation))
+    model.add(Dense(1, init='normal', activation=activation))
 
     optimizer = Adam(lr=learning_rate)
     model.compile(loss='mse', optimizer=optimizer, metrics=['accuracy'])
